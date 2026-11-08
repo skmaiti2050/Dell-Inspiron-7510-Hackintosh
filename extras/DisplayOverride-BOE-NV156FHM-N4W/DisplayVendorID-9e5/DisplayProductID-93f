@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>DisplayProductID</key>
+	<integer>2367</integer>
+	<key>DisplayProductName</key>
+	<string>BOE NV156FHM-N4W (Dell Inspiron 15 7510)</string>
+	<key>DisplayVendorID</key>
+	<integer>2533</integer>
+	<key>IODisplayEDID</key>
+	<data>
+	AP///////wAJ5T8JAAAAABUeAQSlIhN4Bg0lpVRKniUOUFQAAAABAQEBAQEBAQEBAQEB
+	AQEBKDiAzHA4MEAwIDYAWMIQAAAa7SyAzHA4MEAwIDYAWMIQAAAaAAAA/ABOVjE1NkZI
+	TS1ONFcKAAAAAAABQSGeABEAAAoBCiAgAOM=
+	</data>
+</dict>
+</plist>

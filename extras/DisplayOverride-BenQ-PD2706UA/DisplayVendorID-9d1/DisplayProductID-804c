@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>DisplayProductID</key>
+	<integer>32844</integer>
+	<key>DisplayProductName</key>
+	<string>BenQ PD2706UA (RGB+audio, 4K60 DP + 4K30 + 1440p60)</string>
+	<key>DisplayVendorID</key>
+	<integer>2513</integer>
+	<key>IODisplayEDID</key>
+	<data>
+	AP///////wAJ0UyAAQEBAS4hAQOAPCJ4IkC1rlFCrSYPUFSla4DRwIHAgQCBgKnAswAB
+	AQEBBHQAMPJwWoCwWIoAVVAhAAAeVl4AoKCgKVAwIDUAVVAhAAAaAAAA/QAYTBuHPAAK
+	ICAgICAgTdAAoPBwPoAwIDUAVVAhAAAaAbsCAxrAIwkHB4MBAABtAwwAEAAwRCAAYAEC
+	AwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+	AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+	3Q==
+	</data>
+</dict>
+</plist>
