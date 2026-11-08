@@ -35,6 +35,7 @@ Other Tiger Lake-H laptops with `9A60/9A68/9A70` can reuse the graphics part; th
 | Wi-Fi | ✅ | AirportItlwm-Tahoe 2.4.0 alpha (laobamac): native Wi-Fi menu, 2.4 + 5 GHz. WPA3-only networks don't work; AirDrop/Hotspot/Continuity don't on Intel Wi-Fi |
 | Bluetooth | ✅ | IntelBluetoothFirmware/IntelBTPatcher 2.5.3 (lshbluesky fork) + BlueToolFixup; headset A2DP/HFP, BLE mouse, phone pairing |
 | Audio | ✅ | VoodooHDA 3.6.8 (release 368) **in /Library/Extensions, not in this EFI** (see below); speakers, 3.5 mm headphones, USB audio, Bluetooth audio |
+| **Sleep & Wake** | ✅ | Native Modern Standby (S0ix / Deep Idle) via `SSDT-LPS0` (delegating to motherboard `PEPD._DSM`) + `SSDT-GPRW` instant-wake filter; native clamshell lid close/open and power button wake verified |
 | **Built-in microphone** | ✅ | Intel SST DMIC array (cAVS 2.5 DSP `8086:43C8`) via TGLDmic 0.5.0 + `TGLDmic.driver` CoreAudio HAL plug-in; 48 kHz stereo PDM capture with native CoreAudio integration |
 | Keyboard / touchpad | ✅ | VoodooPS2 (`ps2kbdonly=1 ps2rst=0`), VoodooI2C 2.9.1 with the I²C controller spoofed as Ice Lake-LP (`device-id E8340000`) and `-vi2c-force-polling` (no TGL-H GPIO driver) |
 | USB | ✅ | UTBMap for this model: both USB-A at USB 3 (5 Gb/s), webcam, Bluetooth, SD reader; USB-C: power + USB 2 lane only |
@@ -44,9 +45,8 @@ Other Tiger Lake-H laptops with `9A60/9A68/9A70` can reuse the graphics part; th
 
 | Area | Why |
 |---|---|
-| Sleep (S3) | Firmware is Modern-Standby only; `pmset -a sleep 0 disablesleep 1` is set. Hibernate untested |
 | 3.5 mm headset mic | Static only: ALC236 headset mode needs Dell codec verbs that VoodooHDA lacks (use USB/Bluetooth mic) |
-| USB-C data at USB 3 | Tiger Lake Type-C mux has no macOS driver; the USB 2 lane works (hubs, phones, headsets); DP alt mode works |
+| USB-C 4K60 + USB 3 concurrent | DP Alt Mode at 4K60 uses all 4 uncompressed DP lanes (USB hub runs at USB 2.0). USB 3 mode drops DP to 2 lanes, which requires DSC (unsupported on Intel macOS graphics) |
 | AirDrop / Personal Hotspot / Continuity | Intel Wi-Fi limitation on 26.5+ |
 | Monitor speakers (HDMI / DisplayPort audio) | Not in this EFI. Tahoe has no AppleHDA and Apple's AppleGFXHDA cannot share the controller with VoodooHDA. A patched VoodooHDA (github.com/skmaiti2050/VoodooHDA, branch `intel-display-codec`) already enumerates the Intel display codec (power wells + codec wake), but enabling audio on the display pipe still blanks the screen — work in progress, kept out of this release |
 | Fingerprint reader, Thunderbolt | No drivers (see labrouss/EliteBook840G8 for a Tiger Lake SSDT-TBT4 that reportedly tunnels PCIe over TB4) |
