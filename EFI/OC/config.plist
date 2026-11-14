@@ -322,13 +322,21 @@
 			</dict>
 			<key>PciRoot(0x0)/Pci(0x1f,0x3)</key>
 			<dict>
+				<key>AFGLowPowerState</key>
+				<data>
+				AAAAAA==
+				</data>
+				<key>DisableAgcPowerdown</key>
+				<data>
+				AQAAAA==
+				</data>
 				<key>hda-gfx</key>
 				<data>
 				b25ib2FyZC0xAA==
 				</data>
 				<key>layout-id</key>
 				<data>
-				RQAAAA==
+				AwAAAA==
 				</data>
 			</dict>
 			<key>PciRoot(0x0)/Pci(0x2,0x0)</key>
@@ -524,7 +532,7 @@
 				<key>Comment</key>
 				<string>ALC236 audio - off on Tahoe (no AppleHDA); VoodooHDA used instead</string>
 				<key>Enabled</key>
-				<false/>
+				<true/>
 				<key>ExecutablePath</key>
 				<string>Contents/MacOS/AppleALC</string>
 				<key>MaxKernel</key>
@@ -536,15 +544,33 @@
 			</dict>
 			<dict>
 				<key>Arch</key>
-				<string>x86_64</string>
+				<string>Any</string>
 				<key>BundlePath</key>
-				<string>VoodooHDA_BL.kext</string>
+				<string>SimpleHDA.kext</string>
 				<key>Comment</key>
-				<string>OFF: conflicts with Apple IOAudioFamily (USB audio). VoodooHDA 368 is in /Library/Extensions</string>
+				<string>Revive AppleHDA for macOS Tahoe</string>
 				<key>Enabled</key>
-				<false/>
+				<true/>
 				<key>ExecutablePath</key>
-				<string>Contents/MacOS/VoodooHDA_BL</string>
+				<string>Contents/MacOS/SimpleHDA</string>
+				<key>MaxKernel</key>
+				<string></string>
+				<key>MinKernel</key>
+				<string>25.0.0</string>
+				<key>PlistPath</key>
+				<string>Contents/Info.plist</string>
+			</dict>
+			<dict>
+				<key>Arch</key>
+				<string>Any</string>
+				<key>BundlePath</key>
+				<string>VerbStub.kext</string>
+				<key>Comment</key>
+				<string>VerbStub for ComboJack jack event monitoring</string>
+				<key>Enabled</key>
+				<true/>
+				<key>ExecutablePath</key>
+				<string>Contents/MacOS/VerbStub</string>
 				<key>MaxKernel</key>
 				<string></string>
 				<key>MinKernel</key>
@@ -1167,7 +1193,7 @@
 				AAAAAAAAAAAAAAAAAAA=
 				</data>
 				<key>boot-args</key>
-				<string>-v keepsyms=1 debug=0x100 -vi2c-force-polling ps2kbdonly=1 ps2rst=0 -amfipassbeta -allow3d -disablegfxfirmware -igfxdvmt -wex-skip-gputicks -tgldmic</string>
+				<string>-v keepsyms=1 debug=0x100 -vi2c-force-polling ps2kbdonly=1 ps2rst=0 -amfipassbeta -allow3d -disablegfxfirmware -igfxdvmt -wex-skip-gputicks -tgldmic alcid=3 alcverbs=1 alcdelay=1000</string>
 				<key>csr-active-config</key>
 				<data>
 				AwgAAA==

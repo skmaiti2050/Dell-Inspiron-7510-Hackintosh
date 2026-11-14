@@ -52,7 +52,8 @@ This build serves as a stable daily driver featuring **Metal 2 GPU acceleration*
 | **Internal Panel** | 15.6" Full HD **1920×1080 @ 60 Hz** (BOE NV156FHM-N4W eDP) |
 | **Storage** | KIOXIA KBG40ZNS512G NVMe SSD (Internal ESP `disk0s1`) |
 | **Wi-Fi / BT** | Intel Wi-Fi 6 **AX201** (CNVi `8086:43F0`, Bluetooth USB `8087:0026`) |
-| **Audio** | Realtek **ALC236** behind Intel cAVS 2.5 DSP (`8086:43C8`) |
+| **Audio** | Realtek **ALC236** (`0x10EC0236`) behind Intel cAVS 2.5 DSP (`8086:43C8`) via native AppleHDA + SimpleHDA |
+| **Combo Jack** | 3.5 mm TRRS combo jack with automatic speaker auto-mute, headset mic capture, and zero-bias insertion via ComboJack suite |
 | **Digital Mic** | Built-in Dual Digital PDM Microphone Array behind Intel SST / SOF DSP (`8086:43C8`) |
 | **Trackpad** | I²C HID **`DLL0A81`** on `\_SB.PC00.I2C1.TPD0` (precision multi-touch gestures) |
 | **Keyboard** | Internal PS/2 Keyboard with function keys and 2-stage white backlight |
@@ -79,7 +80,10 @@ This build serves as a stable daily driver featuring **Metal 2 GPU acceleration*
 | **AirportItlwm** | **2.4.0 alpha** (laobamac Tahoe build) | Native macOS Wi-Fi menu and WPA2 connectivity |
 | **IntelBluetoothFirmware** | **2.5.3** (lshbluesky) + **IntelBTPatcher** | Intel AX201 Bluetooth firmware and pairing fix |
 | **BlueToolFixup** | **2.7.2** | macOS Bluetooth stack integration |
-| **VoodooHDA** | **3.6.8** (release 368) | Audio engine (installed in `/Library/Extensions`) |
+| **AppleALC** | **1.9.8** | Realtek ALC236 audio patcher (Layout 3, PathMap 236) |
+| **SimpleHDA** | **1.0.1** (laobamac) | Revives native AppleHDAController on macOS Tahoe 26.x |
+| **VerbStub** | **1.0.0** | User-client bridge for Realtek HDA verbs |
+| **ComboJack** | **Custom Build** | Real-time jack watcher, zero-bias insertion, Dell anti-pop, and TRRS headset mic COEF switching |
 | **VoodooI2C / VoodooI2CHID** | **2.9.1** | Precision trackpad multi-touch gestures |
 | **VoodooPS2Controller** | **2.3.7** | PS/2 keyboard plugin |
 | **BrightnessKeys** | **1.0.3** | Fn brightness keys (F6/F7) via ACPI EC queries |
@@ -96,7 +100,8 @@ This build serves as a stable daily driver featuring **Metal 2 GPU acceleration*
 | **Graphics Acceleration** | ✅ **Metal 2** | WhateverXe 0.7.0 (with `-wex-skip-gputicks`) + WhateverXe Graphics 0.4.0; 1536 MB VRAM, 30-bit color, HiDPI scaling, smooth WindowServer |
 | **Sleep & Wake** | ✅ **Native S0ix** | **Modern Standby (S0ix / Deep Idle)** via `SSDT-LPS0` (delegating to motherboard `PEPD._DSM`) + `SSDT-GPRW` instant-wake suppression. Native clamshell lid close/open and power button wake verified |
 | **Internal Mic Array** | ✅ **Native** | Intel SST DMIC array (cAVS 2.5 DSP `8086:43C8`) via `TGLDmic.kext` 0.5.0 + `TGLDmic.driver` CoreAudio HAL plug-in. 48 kHz stereo capture with Apple Voice Isolation |
-| **Audio Output** | ✅ **Working** | Realtek ALC236 speakers and 3.5 mm headphone output via VoodooHDA 3.6.8 in `/Library/Extensions` with volume fix; Bluetooth & USB audio native |
+| **Audio Output** | ✅ **Native AppleHDA** | Clean 24-bit studio audio through internal speakers and 3.5 mm headphones with verified hardware auto-mute on jack insertion (AppleALC Layout 3 + SimpleHDA 1.0.1; zero `/Library/Extensions` kexts needed) |
+| **Combo Jack & Headset Mic** | ✅ **Working** | Real-time jack insertion prompt, silent zero-bias insertion, Dell hardware anti-pop filter, and full 3.5 mm TRRS headset microphone capture via custom-built ComboJack suite |
 | **Internal Display** | ✅ **Working** | Full 1920×1080 @ 60 Hz with smooth native brightness slider and Fn keys |
 | **External Display (USB-C)** | ✅ **4K @ 60 Hz** | DisplayPort Alt Mode over USB-C runs full 4K (3840×2160) @ 60 Hz with monitor set to USB 2.0 mode (4 uncompressed DP lanes) |
 | **External Display (HDMI)** | ✅ **4K @ 30 Hz** | Native HDMI port provides 4K @ 30 Hz (HDMI 1.4 PHY bandwidth limit) |
@@ -237,17 +242,17 @@ The built-in dual digital microphone is connected directly to the Intel SST / cA
 3. Open **System Settings > Sound > Input** and select **Internal Microphone (TGLDmic)**.
 4. When using FaceTime, Zoom, or voice calls, select **Voice Isolation** from the macOS Control Center for background noise suppression.
 
-### C. Internal Speakers and Headphone Jack
-macOS Tahoe has retired legacy AppleHDA, so AppleALC cannot bind natively.
-1. Download **VoodooHDA 3.6.8** (release 368) from [CloverHackyColor/VoodooHDA](https://github.com/CloverHackyColor/VoodooHDA/releases).
-2. Install `VoodooHDA.kext` into `/Library/Extensions/`:
-   ```bash
-   sudo cp -R VoodooHDA.kext /Library/Extensions/
-   sudo chown -R root:wheel /Library/Extensions/VoodooHDA.kext
-   sudo chmod -R 755 /Library/Extensions/VoodooHDA.kext
-   sudo kmutil load -p /Library/Extensions/VoodooHDA.kext
-   ```
-3. Approve the kernel extension in **System Settings > Privacy & Security** and reboot.
+### C. Internal Audio & 3.5 mm Combo Jack (Native AppleHDA + ComboJack)
+Unlike legacy approaches that relied on VoodooHDA in `/Library/Extensions`, audio on this EFI runs **100% natively through AppleHDA** using `SimpleHDA.kext` and `AppleALC.kext` (Layout 3):
+- **Speaker & Headphone Auto-Mute**: Handled natively by AppleHDA (speakers auto-mute immediately upon headphone insertion).
+- **Headset Microphone**: Requires the custom-built ComboJack suite in `extras/ComboJack/` to dynamically configure the Realtek Node `0x20` COEF registers for TRRS microphone bias.
+
+To install the ComboJack daemon:
+```bash
+cd extras/ComboJack
+sudo bash install.sh
+```
+Once installed, plugging in a 3.5 mm headset will present a native prompt (*Headphones / Line-In / Headset*). Selecting **Headset** configures the sleeve bias with zero screech and routes the headset microphone into macOS Sound Input.
 
 ### D. External Display Configuration (HDMI & USB-C)
 - **External HDMI**: Operates at 4K @ 30 Hz. If your monitor displays washed-out colors (YCbCr CEA mode), copy `extras/DisplayOverride-BenQ-PD2706UA` to `/Library/Displays/Contents/Resources/Overrides/` to force full-range RGB.
@@ -379,7 +384,7 @@ All custom SSDT binaries are pre-compiled and placed in `EFI/OC/ACPI/`. Source f
 The production configuration uses the following boot-args:
 
 ```
-keepsyms=1 debug=0x100 -allow3d -disablegfxfirmware -igfxdvmt -wex-skip-gputicks -vi2c-force-polling -tgldmic msgbuf=1048576
+keepsyms=1 debug=0x100 -allow3d -disablegfxfirmware -igfxdvmt -wex-skip-gputicks -vi2c-force-polling -tgldmic alcid=3 alcverbs=1 alcdelay=1000 msgbuf=1048576
 ```
 
 | Argument | Purpose |
@@ -390,6 +395,9 @@ keepsyms=1 debug=0x100 -allow3d -disablegfxfirmware -igfxdvmt -wex-skip-gputicks
 | **`-wex-skip-gputicks`** | Bypasses `GPU_TICKS` register read hang on Tiger Lake-H GT1 chips |
 | **`-vi2c-force-polling`** | Forces VoodooI2C polling mode (Tiger Lake-H GPIO pin interrupts lack native macOS driver) |
 | **`-tgldmic`** | Initializes the Intel SST DMIC CoreAudio capture engine |
+| **`alcid=3`** | AppleALC layout ID 3 (PathMap 236: Realtek ALC236 Speakers, Headphones, 3.5mm Mic, DMIC) |
+| **`alcverbs=1`** | Unlocks AppleALC userspace and kernel verb dispatch for VerbStub |
+| **`alcdelay=1000`** | Enforces 1000 ms codec clock stabilization delay on sleep/wake transitions |
 | **`msgbuf=1048576`** | Expands kernel message buffer to 1 MB for diagnostic logging |
 | **`keepsyms=1 debug=0x100`** | Prevents reboot on panic and preserves kernel symbols for debugging |
 
